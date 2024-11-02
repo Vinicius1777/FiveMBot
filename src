@@ -1,0 +1,37 @@
+-- File: src/server.lua
+local playerCount = 700 -- Example of simulated player count
+
+AddEventHandler("playerConnecting", function()
+    playerCount = playerCount + 1 -- Increment on player connect
+    TriggerClientEvent("updatePlayerCount", -1, playerCount) -- Trigger client event
+end)
+
+AddEventHandler("playerDropped", function()
+    playerCount = playerCount - 1 -- Decrement on player disconnect
+    TriggerClientEvent("updatePlayerCount", -1, playerCount)
+end)
+-- File: server.lua
+local playerCount = 700
+
+AddEventHandler("playerConnecting", function()
+    playerCount = playerCount + 1
+    TriggerClientEvent("updatePlayerCount", -1, playerCount)
+    UpdateServerPlayerCount(playerCount)
+end)
+
+AddEventHandler("playerDropped", function()
+    playerCount = playerCount - 1
+    TriggerClientEvent("updatePlayerCount", -1, playerCount)
+    UpdateServerPlayerCount(playerCount)
+end)
+
+-- Função para chamar a API e atualizar o servidor
+function UpdateServerPlayerCount(count)
+    PerformHttpRequest("http://localhost:30120/playerCount", function(err, text, headers) 
+        if err == 200 then
+            print("Player count updated successfully")
+        else
+            print("Error updating player count:", err)
+        end
+    end, "POST", json.encode({count = count}), { ["Content-Type"] = "application/json" })
+end

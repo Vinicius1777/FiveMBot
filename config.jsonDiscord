@@ -1,0 +1,8 @@
+{
+    "discord_token": "YOUR_DISCORD_BOT_TOKEN",
+    "player_count": 700,
+    "update_interval": 5000,
+    "bot_status": "active",
+    "logging_enabled": true,
+    "server_name": "FiveM Test Server"
+}

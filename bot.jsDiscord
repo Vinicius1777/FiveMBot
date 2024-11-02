@@ -1,0 +1,55 @@
+// bot.js
+// Bot for Discord and FiveM player count simulation
+
+const { Client, GatewayIntentBits } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+
+// Load configuration
+const configPath = path.join(__dirname, 'config/config.json');
+let config = require(configPath);
+
+// Create Discord client
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
+
+// Load player count script
+const playerCountManager = require('./node_scripts/player_count_manager');
+
+// Function to reload configuration
+function reloadConfig() {
+    delete require.cache[require.resolve(configPath)];
+    config = require(configPath);
+}
+
+// Discord bot is ready
+client.once('ready', () => {
+    console.log(`Bot logged in as ${client.user.tag}`);
+    playerCountManager.simulatePlayerCount(config.player_count, config.update_interval);
+});
+
+// Command listener for Discord
+client.on('messageCreate', message => {
+    if (message.content === '!status') {
+        message.channel.send(`Simulating ${config.player_count} players on FiveM server.`);
+    } else if (message.content.startsWith('!setplayers')) {
+        const args = message.content.split(' ');
+        const newCount = parseInt(args[1], 10);
+        if (!isNaN(newCount) && newCount >= 0) {
+            config.player_count = newCount;
+            fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+            message.channel.send(`Player count updated to ${newCount}.`);
+            reloadConfig();
+        } else {
+            message.channel.send('Invalid player count. Please enter a number.');
+        }
+    }
+});
+
+// Log in to Discord
+client.login(config.discord_token);

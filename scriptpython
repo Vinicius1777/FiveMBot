@@ -1,0 +1,19 @@
+# File: src/player_count.py
+import requests
+
+def update_player_count(count):
+    url = "http://localhost:30120/playerCount"
+    try:
+        response = requests.post(url, json={"count": count})
+        response.raise_for_status()
+        print("Player count updated successfully.")
+    except requests.exceptions.RequestException as e:
+        print(f"Error updating player count: {e}")
+# File: player_count.py
+import requests
+import time
+
+def update_player_count(count):
+    url = "http://localhost:30120/playerCount"
+    try:
+        response = requests.post(url, json

@@ -1,0 +1,7 @@
+{
+  "player_count": 700, // Number of virtual players to simulate on the server
+  "update_interval": 5000, // Interval (in milliseconds) for updating the display count
+  "bot_status": "active", // Status of the bot: "active" to run, "inactive" to stop simulation
+  "logging_enabled": true, // Enable logging of bot activity
+  "server_name": "FiveM Test Server" // Optional server name for logging purposes
+}
